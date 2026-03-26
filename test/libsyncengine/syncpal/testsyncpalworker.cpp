@@ -381,6 +381,7 @@ void TestSyncPalWorker::MockSyncPal::createWorkers(const std::chrono::seconds &s
     _tmpBlacklistManager = std::make_shared<TmpBlacklistManager>(shared_from_this());
 }
 
+<<<<<<< HEAD
 void TestSyncPalWorker::MockSyncPal::freeSnapshotsCopies() {
     // Ensure that no shared_ptr outside of SyncPal holds a reference to the snapshots to avoid them being kept alive while the
     // workers are being destroyed, which would cause use-after-free when the workers try to access them during their destruction.
@@ -391,7 +392,7 @@ void TestSyncPalWorker::MockSyncPal::freeSnapshotsCopies() {
     _remoteSnapshot.reset();
 }
 
-ExitInfo TestSyncPalWorker::MockRemoteFileSystemObserverWorker::sendLongPoll(bool &changes) {
+ExitInfo TestSyncPalWorker::MockRemoteFileSystemObserverWorker::sendLongPoll(const RemoteNodeId &, bool &changes) {
     using namespace std::chrono;
     changes = false;
     if (!_networkAvailable) {
