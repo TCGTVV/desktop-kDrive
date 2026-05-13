@@ -322,8 +322,9 @@ ExitInfo LocalFileSystemObserverWorker::changesDetected(
                                                                                       << L" (" << CommonUtility::s2ws(itemId)
                                                                                       << L")");
                 } else {
-                    LOGW_SYNCPAL_WARN(_logger, L"Failed to remove item from local snapshot: " << Utility::formatSyncPath(absolutePath) << L" ("
-                                                                          << CommonUtility::s2ws(itemId) << L")");
+                    LOGW_SYNCPAL_WARN(_logger, L"Failed to remove item from local snapshot: "
+                                                       << Utility::formatSyncPath(absolutePath) << L" ("
+                                                       << CommonUtility::s2ws(itemId) << L")");
                     invalidateSnapshot();
 
                     return ExitCode::DataError;
@@ -333,14 +334,18 @@ ExitInfo LocalFileSystemObserverWorker::changesDetected(
 
             NodeId previousItemId;
             if (const auto exitInfo = _liveSnapshot.getItemId(relativePath, previousItemId); exitInfo) {
-
-            if (_liveSnapshot.pathExists(relativePath)) {
-
+                // If an item with the same path already exists, remove it from snapshot because its ID might have changed (i.e.
+                // the file has been downloaded in the tmp folder then moved to override the existing one). The item will be
+                // inserted below anyway.
+                if (!previousItemId.empty() && _liveSnapshot.removeItem(previousItemId)) {
+                    LOGW_SYNCPAL_DEBUG(_logger, L"Item removed from local snapshot: "
+                                                        << Utility::formatSyncPath(absolutePath) << L" ("
+                                                        << CommonUtility::s2ws(previousItemId) << L")");
                 } else {
-                    LOGW_SYNCPAL_WARN(_logger, L"Failed to delete item: " << Utility::formatSyncPath(absolutePath) << L" ("
-                                                                          << CommonUtility::s2ws(previousItemId) << L")");
+                    LOGW_SYNCPAL_WARN(_logger, L"Failed to remove from local snapshot: "
+                                                       << Utility::formatSyncPath(absolutePath) << L" ("
+                                                       << CommonUtility::s2ws(previousItemId) << L")");
                     invalidateSnapshot();
-
                     return ExitCode::DataError;
                 }
             } else {
