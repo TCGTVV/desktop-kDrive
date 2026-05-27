@@ -36,6 +36,7 @@ namespace Infomaniak.kDrive
         private const int _minimumHeight = 600;
         public AppNavigationView AppNavView { get { return NavView; } }
         public AppModel ViewModel { get; } = App.ServiceProvider.GetRequiredService<AppModel>();
+        public bool KeepAlive { get; set; } = true; // This property can be used to determine if the window should be kept alive when closed, allowing for hiding instead of closing when the user attempts to close the window.
 
         public MainWindow(Type? landingPageType = null)
         {
@@ -83,7 +84,7 @@ namespace Infomaniak.kDrive
 
         private void MainWindow_Closed(object sender, WindowEventArgs args)
         {
-            if ((App.Current as App)?.CurrentWindow == this)
+            if (KeepAlive)
             {
                 args.Handled = true;
                 this.Hide();

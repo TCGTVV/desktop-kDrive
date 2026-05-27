@@ -165,30 +165,32 @@ namespace Infomaniak.kDrive
         public enum CreateWindowOptions
         {
             Foreground = 1,
-            CancelOnboarding = 2,
+            OpenOnboarding = 2,
+            OpenMainWindow = 4,
             OpenSettings = 4
         }
         public void CreateWindow(CreateWindowOptions options)
         {
-            if (CurrentWindow is OnBoardingWindow && options.HasFlag(CreateWindowOptions.CancelOnboarding))
+            if (options.HasFlag(CreateWindowOptions.OpenOnboarding) && options.HasFlag(CreateWindowOptions.OpenSettings))
             {
-                CurrentWindow.Close();
-                CurrentWindow = null;
+                Logger.Log(Logger.Level.Warning, "CreateWindow called with conflicting options OpenOnboarding and OpenSettings, prioritizing OpenOnboarding.");
+                options &= ~CreateWindowOptions.OpenSettings;
             }
 
-            if (CurrentWindow is null)
+            if (options.HasFlag(CreateWindowOptions.OpenOnboarding) && (CurrentWindow is null || CurrentWindow is MainWindow))
             {
-                var appModel = ServiceProvider.GetRequiredService<AppModel>();
-                if (options.HasFlag(CreateWindowOptions.CancelOnboarding) || !StartOnboardingIfNeeded())
-                {
-                    CurrentWindow = new MainWindow(options.HasFlag(CreateWindowOptions.OpenSettings) ? typeof(Pages.Settings.SettingsPage) : null);
-                }
-                else
-                {
-                    options &= ~CreateWindowOptions.Foreground; // StartOnboarding will handle bringing the window to the front, so we can skip it here to avoid unnecessary calls.
-                }
+                if (CurrentWindow is MainWindow mainWindow)
+                    mainWindow.KeepAlive = false;
+
+                CurrentWindow?.Close();
+                CurrentWindow = new OnBoardingWindow();
             }
-            else if (CurrentWindow is MainWindow mainWindow && options.HasFlag(CreateWindowOptions.OpenSettings))
+            else if (CurrentWindow is null || options.HasFlag(CreateWindowOptions.OpenMainWindow))
+            {
+                CurrentWindow?.Close();
+                CurrentWindow = new MainWindow(options.HasFlag(CreateWindowOptions.OpenSettings) ? typeof(Pages.Settings.SettingsPage) : null);
+            }
+            else if (options.HasFlag(CreateWindowOptions.OpenSettings) && CurrentWindow is MainWindow mainWindow)
             {
                 mainWindow?.AppNavView?.Frame?.Navigate(typeof(Pages.Settings.SettingsPage));
             }
@@ -227,29 +229,8 @@ namespace Infomaniak.kDrive
         {
             AppModel.UIThreadDispatcher.TryEnqueue(() =>
             {
-                if (CurrentWindow?.GetType() == typeof(OnBoarding.OnBoardingWindow))
-                {
-                    Logger.Log(Logger.Level.Info, "OnBoardingWindow is already open, skipping StartOnboarding call.");
-                    return;
-                }
-
-                var previousWindow = CurrentWindow;
-                CurrentWindow = new OnBoarding.OnBoardingWindow();
-                previousWindow?.Close();
-
-                ((OnBoarding.OnBoardingWindow)CurrentWindow).Closed += OnOnboardingClosed;
-                Utility.BringCurrentWindowToFront();
+                (App.Current as App)?.CreateWindow(App.CreateWindowOptions.OpenOnboarding | App.CreateWindowOptions.Foreground);
             });
-        }
-
-        private void OnOnboardingClosed(object sender, WindowEventArgs e)
-        {
-            Logger.Log(Logger.Level.Info, "OnBoardingWindow closed, restarting MainWindow.");
-
-            var onboardingWindow = (OnBoarding.OnBoardingWindow)sender;
-            onboardingWindow.Closed -= OnOnboardingClosed;
-            CurrentWindow = null;
-            CreateWindow(CreateWindowOptions.CancelOnboarding | CreateWindowOptions.Foreground);
         }
 
         public bool StartOnboardingIfNeeded()

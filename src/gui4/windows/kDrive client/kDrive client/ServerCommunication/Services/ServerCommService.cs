@@ -1990,13 +1990,7 @@ namespace Infomaniak.kDrive.ServerCommunication.Services
             {
                 await Utility.RunOnUIThread(() =>
                 {
-                    app.CreateWindow(App.CreateWindowOptions.Foreground);
-
-                    // Navigate to settings page
-                    if (app.CurrentWindow is MainWindow mainWindow)
-                    {
-                        mainWindow.AppNavView?.Frame?.Navigate(typeof(Pages.Settings.SettingsPage));
-                    }
+                    app.CreateWindow(App.CreateWindowOptions.OpenSettings);
                 });
             }
         }

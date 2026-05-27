@@ -205,7 +205,7 @@ namespace Infomaniak.kDrive.TrayIcon
             Logger.Log(Logger.Level.Info, "OpenSettingsCommand executed");
             if (Application.Current is App app)
             {
-                app.CreateWindow(CreateWindowOptions.Foreground | CreateWindowOptions.CancelOnboarding | CreateWindowOptions.OpenSettings);
+                app.CreateWindow(CreateWindowOptions.Foreground | CreateWindowOptions.OpenSettings);
             }
         }
 

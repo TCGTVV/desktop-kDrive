@@ -20,6 +20,7 @@ using Infomaniak.kDrive.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using System;
+using static Infomaniak.kDrive.App;
 
 namespace Infomaniak.kDrive.OnBoarding
 {
@@ -72,6 +73,7 @@ namespace Infomaniak.kDrive.OnBoarding
             LottiePlayer.ActualThemeChanged -= LottiePlayer_ActualThemeChanged;
             LottiePlayer?.Cleanup();
             await _onBoardingViewModel.DisposeAsync();
+            (App.Current as App)?.CreateWindow(CreateWindowOptions.Foreground | CreateWindowOptions.OpenMainWindow);
         }
 
         private void LottiePlayer_ActualThemeChanged(FrameworkElement sender, object args)
