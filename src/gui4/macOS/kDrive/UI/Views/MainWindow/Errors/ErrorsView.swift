@@ -17,19 +17,40 @@
  */
 
 import kDriveCoreUI
+import kDriveResources
 import SwiftUI
 
 struct ErrorsView: View {
     @ObservedSynchroErrors private var synchroErrors
 
+    private var errorCount: Int {
+        synchroErrors.flatMap(\.value).count
+    }
+
     var body: some View {
         ScrollView {
-            VStack(spacing: AppPadding.padding32) {
-                ErrorsHeaderView(errorsCount: synchroErrors.flatMap(\.value).count)
+            if errorCount == 0 {
+                IKContentUnavailableView(
+                    image: KDriveResources.mountainsTreesSun.swiftUIImage,
+                    title: "!Aucune activité récente",
+                    action: .init(
+                        title: "Voir les activités",
+                        action: navigateBackToActivities
+                    )
+                )
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                .padding(AppPadding.page)
+            } else {
+                VStack(spacing: AppPadding.padding12) {
+                    ErrorsHeaderView(errorsCount: errorCount)
+                        .padding([.horizontal, .top], AppPadding.page)
+                    ErrorsListView(errors: synchroErrors)
+                }
             }
-            .padding(AppPadding.page)
         }
     }
+
+    private func navigateBackToActivities() {}
 }
 
 #Preview {
