@@ -33,7 +33,7 @@ struct ObservedUISynchroState: DynamicProperty {
 private final class UISynchroStateModel: ObservableObject {
     @InjectService private var synchroStateObserver: UISynchroStateObserving
 
-    @Published private(set) var state = UISynchroState(errorCount: 0, status: .idle)
+    @Published private(set) var state = UISynchroState(errorCount: 1, status: .idle)
 
     private var cancellable: AnyCancellable?
 
@@ -44,7 +44,8 @@ private final class UISynchroStateModel: ObservableObject {
             .receive(on: RunLoop.main)
             .sink { [weak self] output in
                 withAnimation {
-                    self?.state = output
+//                    self?.state = output
+                    self?.state = UISynchroState(errorCount: 1, status: output.status)
                 }
             }
     }

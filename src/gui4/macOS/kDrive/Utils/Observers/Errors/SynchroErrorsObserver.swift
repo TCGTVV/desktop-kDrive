@@ -65,7 +65,7 @@ public final class SynchroErrorsObserver: SynchroErrorsObserving {
             let synchro = await cache.getSynchro(synchroDbId: Int32(synchroDbId))
             let errors = synchro?.errors ?? [:]
 
-            synchroErrors = categorizeErrors(Array(errors.values))
+            synchroErrors = categorizeFakeErrors() //categorizeErrors(Array(errors.values))
 
             @InjectService var cacheObservable: CoherentCacheObservable
             cancellable = cacheObservable.usersPublisher.synchroPublisher(dbId: Int32(synchroDbId))
@@ -74,7 +74,7 @@ public final class SynchroErrorsObserver: SynchroErrorsObserving {
                 .map { self.categorizeErrors(Array($0)) }
                 .receive(on: RunLoop.main)
                 .sink { [weak self] categorizedErrors in
-                    self?.synchroErrors = categorizedErrors
+                    self?.synchroErrors = self?.categorizeFakeErrors() ?? [:] //categorizedErrors
                 }
         }
     }
@@ -89,5 +89,54 @@ public final class SynchroErrorsObserver: SynchroErrorsObserving {
         }
 
         return categorizedErrors
+    }
+
+    private func categorizeFakeErrors() -> [UISynchroErrorCategory: [SynchroError]] {
+        var errors = [UISynchroErrorCategory: [SynchroError]]()
+
+        // -- Files to check
+        errors[.filesToCheck, default: []].append(
+            contentsOf: [
+                .init(
+                    kind: .fileTooBig,
+                    metadata: .init(dbId: 0, synchroDbId: 0, path: "")
+                ),
+                .init(
+                    kind: .fileLockedError,
+                    metadata: .init(dbId: 0, synchroDbId: 0, path: "")
+                ),
+                .init(
+                    kind: .fileRescuedError,
+                    metadata: .init(dbId: 0, synchroDbId: 0, path: "")
+                ),
+                .init(
+                    kind: .localAccess,
+                    metadata: .init(dbId: 0, synchroDbId: 0, path: "")
+                ),
+                .init(
+                    kind: .forbiddenChar,
+                    metadata: .init(dbId: 0, synchroDbId: 0, path: "")
+                ),
+                .init(
+                    kind: .pathLength,
+                    metadata: .init(dbId: 0, synchroDbId: 0, path: "")
+                ),
+                .init(
+                    kind: .conflict,
+                    metadata: .init(dbId: 0, synchroDbId: 0, path: "")
+                )
+            ]
+        )
+
+        errors[.synchronizationDirectories, default: []].append(
+            contentsOf: [
+                .init(
+                    kind: .systemSyncDirDiskMissing,
+                    metadata: .init(dbId: 0, synchroDbId: 0, path: "")
+                )
+            ]
+        )
+
+        return errors
     }
 }
