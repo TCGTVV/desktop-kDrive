@@ -32,9 +32,9 @@ struct ErrorsView: View {
             if errorCount == 0 {
                 IKContentUnavailableView(
                     image: KDriveResources.mountainsTreesSun.swiftUIImage,
-                    title: "!Aucune activité récente",
+                    title: KDriveLocalizable.labelNoErrorsToFix,
                     action: .init(
-                        title: "Voir les activités",
+                        title: KDriveLocalizable.buttonSeeActivities,
                         action: navigateBackToActivities
                     )
                 )
