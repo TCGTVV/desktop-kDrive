@@ -1415,7 +1415,7 @@ ExitInfo ExecutorWorker::handleManagedBackError(const ExitInfo &jobExitInfo, con
     if (jobExitInfo.cause() != ExitCause::NotFound) {
         error = Error(_syncPal->syncDbId(), localNodeId, remoteNodeId, syncOp->affectedNode()->type(),
                       syncOp->affectedNode()->getPath(), ConflictType::None, InconsistencyType::None, CancelType::None, "",
-                      jobExitInfo);
+                      jobExitInfo.code(), jobExitInfo.cause());
     }
     _syncPal->addError(error);
 
@@ -2069,7 +2069,7 @@ ExitInfo ExecutorWorker::runCreateDirJob(SyncOpPtr syncOp, std::shared_ptr<SyncJ
                                            ReplicaSide::Local);
             const Error error(_syncPal->syncDbId(), syncOp->affectedNode()->id().value_or(""), "", syncOp->affectedNode()->type(),
                               syncOp->affectedNode()->getPath(), ConflictType::None, InconsistencyType::None, CancelType::None,
-                              "", ExitInfo{ExitCode::BackError, ExitCause::HttpErrForbidden});
+                              "", ExitCode::BackError, ExitCause::HttpErrForbidden);
             _syncPal->addError(error);
 
             // Clear update tree
@@ -2298,7 +2298,7 @@ ExitInfo ExecutorWorker::handleOpsRemoteFileLocked(SyncOpPtr syncOp, const ExitI
     const auto affectedPath = syncOp->affectedNode()->getPath();
     const auto error =
             Error(_syncPal->syncDbId(), localNodeId, remoteNodeId, syncOp->affectedNode()->type(), affectedPath,
-                  ConflictType::None, InconsistencyType::None, CancelType::None, "", opsExitInfo);
+                  ConflictType::None, InconsistencyType::None, CancelType::None, "", opsExitInfo.code(), opsExitInfo.cause());
     _syncPal->addError(error);
 
     // Blacklist the item
@@ -2344,7 +2344,7 @@ ExitInfo ExecutorWorker::handleOpsAlreadyExistError(const SyncOpPtr syncOp, cons
     getNodeIdsFromOp(syncOp, localNodeId, remoteNodeId);
     const auto error =
             Error(_syncPal->syncDbId(), localNodeId, remoteNodeId, syncOp->affectedNode()->type(), affectedPath,
-                  ConflictType::None, InconsistencyType::None, CancelType::None, "", opsExitInfo);
+                  ConflictType::None, InconsistencyType::None, CancelType::None, "", opsExitInfo.code(), opsExitInfo.cause());
     _syncPal->addError(error);
 
     // Clear update tree
