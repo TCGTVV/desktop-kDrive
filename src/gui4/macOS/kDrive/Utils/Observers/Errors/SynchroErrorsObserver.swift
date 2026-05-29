@@ -102,11 +102,11 @@ public final class SynchroErrorsObserver: SynchroErrorsObserving {
                     metadata: .init(dbId: 0, synchroDbId: 0, path: "")
                 ),
                 .init(
-                    kind: .fileLockedError,
+                    kind: .fileLocked,
                     metadata: .init(dbId: 0, synchroDbId: 0, path: "")
                 ),
                 .init(
-                    kind: .fileRescuedError,
+                    kind: .fileRescued,
                     metadata: .init(dbId: 0, synchroDbId: 0, path: "")
                 ),
                 .init(
