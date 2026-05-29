@@ -99,31 +99,31 @@ public final class SynchroErrorsObserver: SynchroErrorsObserving {
             contentsOf: [
                 .init(
                     kind: .fileTooBig,
-                    metadata: .init(dbId: 0, synchroDbId: 0, path: "")
+                    metadata: .init(dbId: 0, synchroDbId: 0, path: "", nodeType: .file)
                 ),
                 .init(
                     kind: .fileLocked,
-                    metadata: .init(dbId: 0, synchroDbId: 0, path: "")
+                    metadata: .init(dbId: 0, synchroDbId: 0, path: "", nodeType: .file)
                 ),
                 .init(
                     kind: .fileRescued,
-                    metadata: .init(dbId: 0, synchroDbId: 0, path: "")
+                    metadata: .init(dbId: 0, synchroDbId: 0, path: "", nodeType: .file)
                 ),
                 .init(
                     kind: .localAccess,
-                    metadata: .init(dbId: 0, synchroDbId: 0, path: "")
+                    metadata: .init(dbId: 0, synchroDbId: 0, path: "", nodeType: .file)
                 ),
                 .init(
                     kind: .forbiddenChar,
-                    metadata: .init(dbId: 0, synchroDbId: 0, path: "")
+                    metadata: .init(dbId: 0, synchroDbId: 0, path: "", nodeType: .file)
                 ),
                 .init(
                     kind: .pathLength,
-                    metadata: .init(dbId: 0, synchroDbId: 0, path: "")
+                    metadata: .init(dbId: 0, synchroDbId: 0, path: "", nodeType: .file)
                 ),
                 .init(
                     kind: .conflict,
-                    metadata: .init(dbId: 0, synchroDbId: 0, path: "")
+                    metadata: .init(dbId: 0, synchroDbId: 0, path: "", nodeType: .file)
                 )
             ]
         )
@@ -132,7 +132,7 @@ public final class SynchroErrorsObserver: SynchroErrorsObserving {
             contentsOf: [
                 .init(
                     kind: .systemSyncDirDiskMissing,
-                    metadata: .init(dbId: 0, synchroDbId: 0, path: "")
+                    metadata: .init(dbId: 0, synchroDbId: 0, path: "", nodeType: .file)
                 )
             ]
         )
